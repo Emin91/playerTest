@@ -1,0 +1,64 @@
+import React, { FC, useState } from 'react';
+import { Dimensions, View, TouchableOpacity } from 'react-native';
+import BackArrowIcon from '../../assets/svg/BackArrowIcon';
+import MaskedView from '@react-native-masked-view/masked-view';
+import FlashIconSVG from '../../assets/svg/FlashIconSVG';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { RNCamera } from 'react-native-camera';
+import { useDispatch } from 'react-redux';
+import { styles } from './styles';
+
+export const CheckpointQRScanComponent: FC<{ navigation: any }> = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const [isFlashIn, setFlash] = useState(false);
+  const { width, height } = Dimensions.get('screen');
+  const [isButtonPressed, setIsButtonPressed] = useState(false);
+
+  const onSuccess = (e: { data: string }) => {
+    navigation.goBack();
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <MaskedView
+        style={styles.container}
+        maskElement={
+          <View style={styles.maskedContainer}>
+            <View style={styles.maskedCameraBack} />
+            <View style={styles.maskedMarkerContainer} />
+          </View>
+        }>
+        <QRCodeScanner
+          showMarker={true}
+          flashMode={isFlashIn ? RNCamera.Constants.FlashMode.torch : RNCamera.Constants.FlashMode.off}
+          onRead={onSuccess}
+          cameraStyle={{ width, height }}
+          customMarker={
+            <View style={styles.customMarker}>
+              <View style={styles.customMarkerTopRow}>
+                <View style={styles.leftTopMarker} />
+                <View style={styles.rightTopMarker} />
+              </View>
+              <View style={styles.customMarkerBottomRow}>
+                <View style={styles.leftBottomMarker} />
+                <View style={styles.rightBottomMarker} />
+              </View>
+            </View>
+          }
+        />
+        <View style={styles.leftMask} />
+        <View style={styles.rightMask} />
+        <View style={styles.topMask} />
+        <View style={styles.bottomMask} />
+      </MaskedView>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={navigation.goBack}>
+          <BackArrowIcon />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.flashButton} onPress={() => setFlash(prev => !prev)}>
+          <FlashIconSVG />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};

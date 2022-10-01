@@ -1,0 +1,3 @@
+export enum ActionType {
+    NAVIGATION_SPLASH_SCREEN = 'NAVIGATION_SPLASH_SCREEN',
+};
